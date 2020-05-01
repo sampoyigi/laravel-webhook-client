@@ -10,9 +10,9 @@ use Spatie\WebhookClient\Models\WebhookCall;
 
 class WebhookProcessor
 {
-    protected Request $request;
+    protected $request;
 
-    protected WebhookConfig $config;
+    protected $config;
 
     public function __construct(Request $request, WebhookConfig $config)
     {
@@ -25,7 +25,7 @@ class WebhookProcessor
     {
         $this->ensureValidSignature();
 
-        if (! $this->config->webhookProfile->shouldProcess($this->request)) {
+        if (!$this->config->webhookProfile->shouldProcess($this->request)) {
             return $this->createResponse();
         }
 
@@ -38,7 +38,7 @@ class WebhookProcessor
 
     protected function ensureValidSignature()
     {
-        if (! $this->config->signatureValidator->isValid($this->request, $this->config)) {
+        if (!$this->config->signatureValidator->isValid($this->request, $this->config)) {
             event(new InvalidSignatureEvent($this->request));
 
             throw WebhookFailed::invalidSignature();
@@ -60,7 +60,8 @@ class WebhookProcessor
             $webhookCall->clearException();
 
             dispatch($job);
-        } catch (Exception $exception) {
+        }
+        catch (Exception $exception) {
             $webhookCall->saveException($exception);
 
             throw $exception;

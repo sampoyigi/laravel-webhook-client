@@ -10,21 +10,21 @@ use Spatie\WebhookClient\WebhookResponse\RespondsToWebhook;
 
 class WebhookConfig
 {
-    public string $name;
+    public $name;
 
-    public string $signingSecret;
+    public $signingSecret;
 
-    public string $signatureHeaderName;
+    public $signatureHeaderName;
 
-    public SignatureValidator $signatureValidator;
+    public $signatureValidator;
 
-    public WebhookProfile $webhookProfile;
+    public $webhookProfile;
 
-    public RespondsToWebhook $webhookResponse;
+    public $webhookResponse;
 
-    public string $webhookModel;
+    public $webhookModel;
 
-    public string $processWebhookJobClass;
+    public $processWebhookJobClass;
 
     public function __construct(array $properties)
     {
@@ -34,25 +34,25 @@ class WebhookConfig
 
         $this->signatureHeaderName = $properties['signature_header_name'] ?? '';
 
-        if (! is_subclass_of($properties['signature_validator'], SignatureValidator::class)) {
+        if (!is_subclass_of($properties['signature_validator'], SignatureValidator::class)) {
             throw InvalidConfig::invalidSignatureValidator($properties['signature_validator']);
         }
         $this->signatureValidator = app($properties['signature_validator']);
 
-        if (! is_subclass_of($properties['webhook_profile'], WebhookProfile::class)) {
+        if (!is_subclass_of($properties['webhook_profile'], WebhookProfile::class)) {
             throw InvalidConfig::invalidWebhookProfile($properties['webhook_profile']);
         }
         $this->webhookProfile = app($properties['webhook_profile']);
 
         $webhookResponseClass = $properties['webhook_response'] ?? DefaultRespondsTo::class;
-        if (! is_subclass_of($webhookResponseClass, RespondsToWebhook::class)) {
+        if (!is_subclass_of($webhookResponseClass, RespondsToWebhook::class)) {
             throw InvalidConfig::invalidWebhookResponse($webhookResponseClass);
         }
         $this->webhookResponse = app($webhookResponseClass);
 
         $this->webhookModel = $properties['webhook_model'];
 
-        if (! is_subclass_of($properties['process_webhook_job'], ProcessWebhookJob::class)) {
+        if (!is_subclass_of($properties['process_webhook_job'], ProcessWebhookJob::class)) {
             throw InvalidConfig::invalidProcessWebhookJob($properties['process_webhook_job']);
         }
         $this->processWebhookJobClass = $properties['process_webhook_job'];

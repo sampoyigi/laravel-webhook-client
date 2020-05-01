@@ -17,7 +17,7 @@ class WebhookClientServiceProvider extends ServiceProvider
             ], 'config');
         }
 
-        if (! class_exists('CreateWebhookCallsTable')) {
+        if (!class_exists('CreateWebhookCallsTable')) {
             $timestamp = date('Y_m_d_His', time());
 
             $this->publishes([
@@ -25,13 +25,17 @@ class WebhookClientServiceProvider extends ServiceProvider
             ], 'migrations');
         }
 
-        Route::macro('webhooks', fn (string $url, string $name = 'default') => Route::post($url, '\Spatie\WebhookClient\WebhookController')->name("webhook-client-{$name}"));
+        Route::macro('webhooks', function (string $url, string $name = 'default') {
+            return Route::post($url, '\Spatie\WebhookClient\WebhookController')->name("webhook-client-{$name}");
+        });
 
         $this->app->singleton(WebhookConfigRepository::class, function () {
             $configRepository = new WebhookConfigRepository();
 
             collect(config('webhook-client.configs'))
-                ->map(fn (array $config) => new WebhookConfig($config))
+                ->map(function (array $config) {
+                    return new WebhookConfig($config);
+                })
                 ->each(function (WebhookConfig $webhookConfig) use ($configRepository) {
                     $configRepository->addConfig($webhookConfig);
                 });
